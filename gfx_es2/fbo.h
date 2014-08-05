@@ -4,6 +4,13 @@
 // Very C-ish API because that's what I felt like, and it's cool to completely
 // hide the data from callers...
 
+#ifdef __LIBRETRO__
+#include "libretro/libretro_host.h"
+#define DEFAULT_FRAMEBUFFER ((GLuint)libretro_framebuffer)
+#else
+#define DEFAULT_FRAMEBUFFER 0
+#endif
+
 struct FBO;
 
 

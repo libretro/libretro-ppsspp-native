@@ -245,10 +245,10 @@ void fbo_unbind() {
 
 	CheckGLExtensions();
 	if (gl_extensions.FBO_ARB) {
-		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		glBindFramebuffer(GL_FRAMEBUFFER, DEFAULT_FRAMEBUFFER);
 	} else {
 #ifndef USING_GLES2
-		glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);
+		glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, DEFAULT_FRAMEBUFFER);
 #endif
 	}
 #ifdef IOS
@@ -316,7 +316,7 @@ void fbo_destroy(FBO *fbo) {
 		glBindFramebuffer(GL_FRAMEBUFFER, fbo->handle);
 		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, 0, 0);
 		glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, 0);
-		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		glBindFramebuffer(GL_FRAMEBUFFER, DEFAULT_FRAMEBUFFER);
 		glDeleteFramebuffers(1, &fbo->handle);
 		glDeleteRenderbuffers(1, &fbo->z_stencil_buffer);
 		glDeleteRenderbuffers(1, &fbo->z_buffer);
@@ -326,7 +326,7 @@ void fbo_destroy(FBO *fbo) {
 		glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, fbo->handle);
 		glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, 0, 0);
 		glFramebufferRenderbufferEXT(GL_FRAMEBUFFER_EXT, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER_EXT, 0);
-		glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);
+		glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, DEFAULT_FRAMEBUFFER);
 		glDeleteFramebuffersEXT(1, &fbo->handle);
 		glDeleteRenderbuffersEXT(1, &fbo->z_stencil_buffer);
 #endif
