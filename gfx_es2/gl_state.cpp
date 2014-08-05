@@ -4,7 +4,11 @@
 #include "base/NativeApp.h"
 #include "gl_state.h"
 
-#ifdef _WIN32
+#if defined(_WIN32) && !defined(__LIBRETRO__)
+#define HAVE_WGL
+#endif
+
+#ifdef HAVE_WGL
 #include "GL/wglew.h"
 #endif
 
@@ -188,7 +192,7 @@ void CheckGLExtensions() {
 		g_all_gl_extensions = "";
 	}
 
-#ifdef WIN32
+#ifdef HAVE_WGL
 	const char *wglString = 0;
 	if (wglGetExtensionsStringEXT)
 		wglString = wglGetExtensionsStringEXT();
@@ -324,7 +328,7 @@ void CheckGLExtensions() {
 }
 
 void OpenGLState::SetVSyncInterval(int interval) {
-#ifdef _WIN32
+#ifdef HAVE_WGL
 	if (wglSwapIntervalEXT)
 		wglSwapIntervalEXT(interval);
 #endif
