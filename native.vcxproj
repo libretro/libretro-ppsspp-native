@@ -243,7 +243,7 @@
       <PrecompiledHeader>
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
-      <Optimization>MaxSpeed</Optimization>
+      <Optimization>Full</Optimization>
       <PreprocessorDefinitions>__LIBRETRO__;WIN32;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>..\zlib;..\ext\zlib;..\native;..\RollerballGL;..\native\ext\glew;..\SDL\include;..\native\ext;%(AdditionalIncludeDirectories);..</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
