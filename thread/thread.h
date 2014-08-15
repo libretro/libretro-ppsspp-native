@@ -175,8 +175,12 @@ public:
 
 	void join()
 	{
-#ifdef _WIN32
+#if defined(_WIN32) 
+#if defined(__LIBRETRO__)
+		WaitForSingleObject(m_handle, 100);
+#else
 		WaitForSingleObject(m_handle, INFINITE);
+#endif		
 		detach();
 #else
 		pthread_join(m_id.m_thread, NULL);
