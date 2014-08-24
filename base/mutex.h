@@ -7,7 +7,11 @@
 
 // TODO: Need to clean up these primitives and put them in a reasonable namespace.
 
-#ifdef _WIN32
+#if defined(_WIN32) && !defined(__MINGW32__)
+#define _WIN32_NO_MINGW
+#endif
+
+#ifdef _WIN32_NO_MINGW
 #define WIN32_LEAN_AND_MEAN
 #define NOMINMAX
 #include <windows.h>
@@ -45,7 +49,7 @@ public:
 	}
 
 	void clear() {
-#if defined(_WIN32)
+#ifdef _WIN32_NO_MINGW
 		_WriteBarrier();
 		value = 0;
 #else
@@ -55,7 +59,7 @@ public:
 
 	// Returns the previous value.
 	bool test_and_set() {
-#if defined(_WIN32)
+#ifdef _WIN32_NO_MINGW
 		return InterlockedExchange(&value, 1) != 0;
 #else
 		return __sync_lock_test_and_set(&value, 1) != 0;
@@ -69,14 +73,14 @@ private:
 };
 
 class recursive_mutex {
-#ifdef _WIN32
+#ifdef _WIN32_NO_MINGW
 	typedef CRITICAL_SECTION mutexType;
 #else
 	typedef pthread_mutex_t mutexType;
 #endif
 public:
 	recursive_mutex() {
-#ifdef _WIN32
+#ifdef _WIN32_NO_MINGW
 		InitializeCriticalSection(&mut_);
 #else
 		// Critical sections are recursive so let's make these recursive too.
@@ -87,7 +91,7 @@ public:
 #endif
 	}
 	~recursive_mutex() {
-#ifdef _WIN32
+#ifdef _WIN32_NO_MINGW
 		DeleteCriticalSection(&mut_);
 #else
 		pthread_mutex_destroy(&mut_);
@@ -95,7 +99,7 @@ public:
 	}
 
 	bool trylock() {
-#ifdef _WIN32
+#ifdef _WIN32_NO_MINGW
 		return TryEnterCriticalSection(&mut_) != FALSE;
 #else
 		return pthread_mutex_trylock(&mut_) != EBUSY;
@@ -103,7 +107,7 @@ public:
 	}
 
 	void lock() {
-#ifdef _WIN32
+#ifdef _WIN32_NO_MINGW
 		EnterCriticalSection(&mut_);
 #else
 		pthread_mutex_lock(&mut_);
@@ -111,7 +115,7 @@ public:
 	}
 
 	void unlock() {
-#ifdef _WIN32
+#ifdef _WIN32_NO_MINGW
 		LeaveCriticalSection(&mut_);
 #else
 		pthread_mutex_unlock(&mut_);
@@ -141,18 +145,18 @@ private:
 
 class event {
 public:
-#ifdef _WIN32
+#ifdef _WIN32_NO_MINGW
 #else
 #endif
 	event() {
-#ifdef _WIN32
+#ifdef _WIN32_NO_MINGW
 		event_ = CreateEvent(0, FALSE, FALSE, 0);
 #else
 		pthread_cond_init(&event_, NULL);
 #endif
 	}
 	~event() {
-#ifdef _WIN32
+#ifdef _WIN32_NO_MINGW
 		CloseHandle(event_);
 #else
 		pthread_cond_destroy(&event_);
@@ -160,7 +164,7 @@ public:
 	}
 
 	void notify_one() {
-#ifdef _WIN32
+#ifdef _WIN32_NO_MINGW
 		SetEvent(event_);
 #else
 		pthread_cond_signal(&event_);
@@ -171,7 +175,7 @@ public:
 
 	void wait(recursive_mutex &mtx) {
 	// broken
-#ifdef _WIN32
+#ifdef _WIN32_NO_MINGW
 		// This has to be horribly racy.
 		mtx.lock();
 		WaitForSingleObject(event_, INFINITE);
@@ -185,7 +189,7 @@ public:
 	}
 
 	void wait_for(recursive_mutex &mtx, int milliseconds) {
-#ifdef _WIN32
+#ifdef _WIN32_NO_MINGW
 		//mtx.unlock();
 		WaitForSingleObject(event_, milliseconds);
 		ResetEvent(event_); // necessary?
@@ -209,12 +213,12 @@ public:
 	}
 
 	void reset() {
-#ifdef _WIN32
+#ifdef _WIN32_NO_MINGW
 		ResetEvent(event_);
 #endif
 	}
 private:
-#ifdef _WIN32
+#ifdef _WIN32_NO_MINGW
 	HANDLE event_;
 #else
 	pthread_cond_t event_;
@@ -226,11 +230,11 @@ private:
 
 class condition_variable {
 public:
-#ifdef _WIN32
+#ifdef _WIN32_NO_MINGW
 #else
 #endif
 	condition_variable() {
-#ifdef _WIN32
+#ifdef _WIN32_NO_MINGW
 #ifdef _WIN64
 		InitializeConditionVariable(&cond_);
 #else
@@ -242,7 +246,7 @@ public:
 #endif
 	}
 	~condition_variable() {
-#ifdef _WIN32
+#ifdef _WIN32_NO_MINGW
 #ifdef _WIN64
 #else
 		CloseHandle(sema_);
@@ -253,7 +257,7 @@ public:
 	}
 
 	void notify_one() {
-#ifdef _WIN32
+#ifdef _WIN32_NO_MINGW
 #ifdef _M_X64
 		WakeConditionVariable(&cond_);
 #else
@@ -272,7 +276,7 @@ public:
 
 	void wait(recursive_mutex &mtx) {
 		// broken http://msdn.microsoft.com/en-us/library/windows/desktop/ms686301(v=vs.85).aspx
-#ifdef _WIN32
+#ifdef _WIN32_NO_MINGW
 #ifdef _M_X64
 		SleepConditionVariableCS(&cond_, &mtx.native_handle(), INFINITE);
 #else
@@ -291,7 +295,7 @@ public:
 	}
 
 	void wait_for(recursive_mutex &mtx, int milliseconds) {
-#ifdef _WIN32
+#ifdef _WIN32_NO_MINGW
 #ifdef _M_X64
 		SleepConditionVariableCS(&cond_, &mtx.native_handle(), milliseconds);
 #else
@@ -321,7 +325,7 @@ public:
 	}
 
 private:
-#ifdef _WIN32
+#ifdef _WIN32_NO_MINGW
 #ifdef _M_X64
 	CONDITION_VARIABLE cond_;
 #else

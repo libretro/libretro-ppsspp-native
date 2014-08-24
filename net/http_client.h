@@ -7,8 +7,14 @@
 #include "thread/thread.h"
 #include "base/functional.h"
 
-#ifdef _WIN32
+#if defined(_WIN32) && !defined(__MINGW32__)
+#define _WIN32_NO_MINGW
+#endif
+
+#ifdef _WIN32_NO_MINGW
 #define NOMINMAX
+#include <winsock2.h>
+#elif defined(_WIN32)
 #include <winsock2.h>
 #else
 #if defined(__FreeBSD__) || defined(__SYMBIAN32__)

@@ -1,6 +1,10 @@
 #include "net/http_client.h"
 #include "base/timeutil.h"
 
+#if defined(_WIN32) && !defined(__MINGW32__)
+#define _WIN32_NO_MINGW
+#endif
+
 #ifndef _WIN32
 #include <arpa/inet.h>
 #include <sys/socket.h>
@@ -8,8 +12,10 @@
 #define closesocket close
 #else
 #include <winsock2.h>
+#ifdef _WIN32_NO_MINGW
 #include <ws2tcpip.h>
 #include <io.h>
+#endif
 #endif
 
 #include <stdio.h>

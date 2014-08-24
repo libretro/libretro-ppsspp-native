@@ -1,4 +1,8 @@
-#ifdef _WIN32
+#if defined(_WIN32) && !defined(__MINGW32__)
+#define _WIN32_NO_MINGW
+#endif
+
+#ifdef _WIN32_NO_MINGW
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 #include <commdlg.h>

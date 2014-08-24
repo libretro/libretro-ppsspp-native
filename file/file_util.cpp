@@ -1,4 +1,9 @@
-#ifdef _WIN32
+#if defined(_WIN32) && !defined(__MINGW32__)
+#define _WIN32_NO_MINGW
+#define _WIN32_USING_UNICODE
+#endif
+
+#ifdef _WIN32_NO_MINGW
 #define WIN32_LEAN_AND_MEAN
 #include <Windows.h>
 #include <direct.h>
@@ -46,7 +51,7 @@ static inline int readdir_r(DIR *dirp, struct dirent *entry, struct dirent **res
 
 FILE *openCFile(const std::string &filename, const char *mode)
 {
-#if defined(_WIN32) && defined(UNICODE)
+#ifdef _WIN32_USING_UNICODE
 	return _wfopen(ConvertUTF8ToWString(filename).c_str(), ConvertUTF8ToWString(mode).c_str());
 #else
 	return fopen(filename.c_str(), mode);
@@ -150,7 +155,7 @@ static void stripTailDirSlashes(std::string &fname)
 
 // Returns true if file filename exists
 bool exists(const std::string &filename) {
-#ifdef _WIN32
+#ifdef _WIN32_NO_MINGW
 	std::wstring wstr = ConvertUTF8ToWString(filename);
 	return GetFileAttributes(wstr.c_str()) != 0xFFFFFFFF;
 #else
@@ -176,7 +181,7 @@ bool getFileInfo(const char *path, FileInfo *fileInfo) {
 	// TODO: Expand relative paths?
 	fileInfo->fullName = path;
 
-#ifdef _WIN32
+#ifdef _WIN32_NO_MINGW
 	WIN32_FILE_ATTRIBUTE_DATA attrs;
 	if (!GetFileAttributesExW(ConvertUTF8ToWString(path).c_str(), GetFileExInfoStandard, &attrs)) {
 		fileInfo->size = 0;
@@ -251,7 +256,7 @@ size_t getFilesInDir(const char *directory, std::vector<FileInfo> *files, const 
 	}
 	if (tmp.size())
 		filters.insert(tmp);
-#ifdef _WIN32
+#ifdef _WIN32_NO_MINGW
 	// Find the first file in the directory.
 	WIN32_FIND_DATA ffd;
 #ifdef UNICODE
@@ -319,7 +324,7 @@ size_t getFilesInDir(const char *directory, std::vector<FileInfo> *files, const 
 		if (files)
 			files->push_back(info);
 		foundEntries++;
-#ifdef _WIN32
+#ifdef _WIN32_NO_MINGW
 	} while (FindNextFile(hFind, &ffd) != 0);
 	FindClose(hFind);
 #else
@@ -333,7 +338,7 @@ size_t getFilesInDir(const char *directory, std::vector<FileInfo> *files, const 
 
 void deleteFile(const char *file)
 {
-#ifdef _WIN32
+#ifdef _WIN32_NO_MINGW
 	if (!DeleteFile(ConvertUTF8ToWString(file).c_str())) {
 		ELOG("Error deleting %s: %i", file, GetLastError());
 	}
@@ -347,7 +352,7 @@ void deleteFile(const char *file)
 
 void deleteDir(const char *dir)
 {
-#ifdef _WIN32
+#ifdef _WIN32_NO_MINGW
 	if (!RemoveDirectory(ConvertUTF8ToWString(dir).c_str())) {
 		ELOG("Error deleting directory %s: %i", dir, GetLastError());
 	}
@@ -395,7 +400,7 @@ void mkDir(const std::string &path)
 #endif
 }
 
-#ifdef _WIN32
+#ifndef _WIN32_NO_MINGW
 // Returns a vector with the device names
 std::vector<std::string> getWindowsDrives()
 {

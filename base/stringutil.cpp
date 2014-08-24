@@ -1,4 +1,8 @@
-#ifdef _WIN32
+#if defined(_WIN32) && !defined(__MINGW32__)
+#define _WIN32_NO_MINGW
+#endif
+
+#ifdef _WIN32_NO_MINGW
 #include <windows.h>
 #undef min
 #undef max
@@ -16,7 +20,7 @@
 #include "base/buffer.h"
 #include "base/stringutil.h"
 
-#ifdef _WIN32
+#ifdef _WIN32_NO_MINGW
 // Function Cross-Compatibility
 #define strcasecmp _stricmp
 
@@ -91,7 +95,7 @@ std::string StringFromFormat(const char* format, ...)
 	va_list args;
 	char *buf = NULL;
 	std::string temp = "";
-#ifdef _WIN32
+#ifdef _WIN32_NO_MINGW
 	int required = 0;
 
 	va_start(args, format);

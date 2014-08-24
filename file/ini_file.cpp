@@ -5,6 +5,10 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+#if defined(_WIN32) && !defined(__MINGW32__)
+#define _WIN32_NO_MINGW
+#endif
+
 #ifndef _MSC_VER
 #include <strings.h>
 #endif
@@ -20,7 +24,7 @@
 #include "file/ini_file.h"
 #include "file/vfs.h"
 
-#ifdef _WIN32
+#ifdef _WIN32_NO_MINGW
 #include "../util/text/utf8.h"
 	// Function Cross-Compatibility
 #define strcasecmp _stricmp
@@ -411,7 +415,7 @@ bool IniFile::Load(const char* filename)
 
 	// Open file
 	std::ifstream in;
-#ifdef _WIN32
+#ifdef _WIN32_NO_MINGW
 	in.open(ConvertUTF8ToWString(filename), std::ios::in);
 #else
 	in.open(filename, std::ios::in);
@@ -489,7 +493,7 @@ bool IniFile::Load(std::istream &in) {
 bool IniFile::Save(const char* filename)
 {
 	std::ofstream out;
-#ifdef _WIN32
+#ifdef _WIN32_NO_MINGW
 	out.open(ConvertUTF8ToWString(filename), std::ios::out);
 #else
 	out.open(filename, std::ios::out);
