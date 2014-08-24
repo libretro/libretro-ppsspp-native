@@ -1,4 +1,8 @@
-#ifdef _WIN32
+#if defined(_WIN32) && !defined(__MINGW32__)
+#define _WIN32_NO_MINGW
+#endif
+
+#ifdef _WIN32_NO_MINGW
 #include <windows.h>
 #define TLS_SUPPORTED
 #elif defined(ANDROID)
@@ -14,7 +18,7 @@ static __THREAD const char *curThreadName;
 #endif
 
 void setCurrentThreadName(const char* threadName) {
-#ifdef _WIN32
+#ifdef _WIN32_NO_MINGW
 	// Set the debugger-visible threadname through an unholy magic hack
 	static const DWORD MS_VC_EXCEPTION = 0x406D1388;
 #pragma pack(push,8)
