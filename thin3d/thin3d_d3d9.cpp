@@ -173,7 +173,7 @@ private:
 
 class Thin3DDX9Shader : public Thin3DShader {
 public:
-	Thin3DDX9Shader(bool isPixelShader) : isPixelShader_(isPixelShader), vshader_(NULL), pshader_(NULL) {}
+	Thin3DDX9Shader(bool isPixelShader) : isPixelShader_(isPixelShader), vshader_(NULL), pshader_(NULL), constantTable_(NULL) {}
 	~Thin3DDX9Shader() {
 		if (vshader_)
 			vshader_->Release();
@@ -428,6 +428,10 @@ Thin3DShader *Thin3DDX9Context::CreateFragmentShader(const char *glsl_source, co
 }
 
 Thin3DShaderSet *Thin3DDX9Context::CreateShaderSet(Thin3DShader *vshader, Thin3DShader *fshader) {
+	if (!vshader || !fshader) {
+		ELOG("ShaderSet requires both a valid vertex and a fragment shader: %p %p", vshader, fshader);
+		return NULL;
+	}
 	Thin3DDX9ShaderSet *shaderSet = new Thin3DDX9ShaderSet(device_);
 	shaderSet->vshader = static_cast<Thin3DDX9Shader *>(vshader);
 	shaderSet->pshader = static_cast<Thin3DDX9Shader *>(fshader);
@@ -604,10 +608,10 @@ void Thin3DDX9Context::SetScissorRect(int left, int top, int width, int height) 
 
 void Thin3DDX9Context::SetViewports(int count, T3DViewport *viewports) {
 	D3DVIEWPORT9 vp;
-	vp.X = viewports[0].TopLeftX;
-	vp.Y = viewports[0].TopLeftY;
-	vp.Width = viewports[0].Width;
-	vp.Height = viewports[0].Height;
+	vp.X = (DWORD)viewports[0].TopLeftX;
+	vp.Y = (DWORD)viewports[0].TopLeftY;
+	vp.Width = (DWORD)viewports[0].Width;
+	vp.Height = (DWORD)viewports[0].Height;
 	vp.MinZ = viewports[0].MinDepth;
 	vp.MaxZ = viewports[0].MaxDepth;
 	device_->SetViewport(&vp);
