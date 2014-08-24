@@ -24,6 +24,11 @@
 #include <unistd.h>
 #endif
 
+#ifdef __MINGW32__
+#ifndef AI_ADDRCONFIG
+#define AI_ADDRCONFIG 0
+#endif
+#endif
 
 namespace net {
 
