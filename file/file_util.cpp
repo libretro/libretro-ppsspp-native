@@ -400,7 +400,7 @@ void mkDir(const std::string &path)
 #endif
 }
 
-#ifndef _WIN32_NO_MINGW
+#ifdef _WIN32_NO_MINGW
 // Returns a vector with the device names
 std::vector<std::string> getWindowsDrives()
 {
