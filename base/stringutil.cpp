@@ -41,6 +41,22 @@ void OutputDebugStringUTF8(const char *p) {
 
 #endif
 
+#ifdef __MINGW32__
+int vasprintf(char **strp, const char *fmt, va_list ap)
+{
+   va_list aq;
+   int ret;
+
+   va_copy(aq, ap);
+   ret = vsnprintf(NULL, 0, fmt, aq);
+   va_end(aq);
+   if ((*strp = (char*)malloc(ret + 1)) == NULL)
+      return (-1);
+   ret = vsnprintf(*strp, ret + 1, fmt, ap);
+   return (ret);
+}
+#endif
+
 unsigned int parseHex(const char *_szValue)
 {
 	int Value = 0;
