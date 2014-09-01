@@ -409,7 +409,7 @@ Thin3DDX9Context::~Thin3DDX9Context() {
 
 Thin3DShader *Thin3DDX9Context::CreateVertexShader(const char *glsl_source, const char *hlsl_source) {
 	Thin3DDX9Shader *shader = new Thin3DDX9Shader(false);
-	if (shader->Compile(device_, hlsl_source, "vs_3_0")) {
+	if (shader->Compile(device_, hlsl_source, "vs_2_0")) {
 		return shader;
 	} else {
 		delete shader;
@@ -419,7 +419,7 @@ Thin3DShader *Thin3DDX9Context::CreateVertexShader(const char *glsl_source, cons
 
 Thin3DShader *Thin3DDX9Context::CreateFragmentShader(const char *glsl_source, const char *hlsl_source) {
 	Thin3DDX9Shader *shader = new Thin3DDX9Shader(true);
-	if (shader->Compile(device_, hlsl_source, "ps_3_0")) {
+	if (shader->Compile(device_, hlsl_source, "ps_2_0")) {
 		return shader;
 	} else {
 		delete shader;
@@ -515,7 +515,7 @@ static int VertexDataTypeToD3DType(T3DVertexDataType type) {
 
 Thin3DDX9VertexFormat::Thin3DDX9VertexFormat(LPDIRECT3DDEVICE9 device, const std::vector<Thin3DVertexComponent> &components, int stride) : decl_(NULL) {
 	D3DVERTEXELEMENT9 *elements = new D3DVERTEXELEMENT9[components.size() + 1];
-	int i;
+	size_t i;
 	for (i = 0; i < components.size(); i++) {
 		elements[i].Stream = 0;
 		elements[i].Offset = components[i].offset;
