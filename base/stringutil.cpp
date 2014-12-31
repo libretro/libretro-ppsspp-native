@@ -58,7 +58,7 @@ int vasprintf(char **strp, const char *fmt, va_list ap)
 #endif
 
 void StringTrimEndNonAlphaNum(char *str) {
-	int n = strlen(str);
+	ssize_t n = strlen(str);
 	while (!isalnum(str[n]) && n >= 0) {
 		str[n--] = '\0';
 	}
