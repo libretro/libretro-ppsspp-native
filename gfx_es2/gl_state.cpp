@@ -198,6 +198,7 @@ void CheckGLExtensions() {
 		g_all_gl_extensions = extString;
 	} else {
 		g_all_gl_extensions = "";
+		extString = "";
 	}
 
 #ifdef HAVE_WGL
@@ -346,7 +347,7 @@ void CheckGLExtensions() {
 	gl_extensions.FBO_EXT = false;
 	gl_extensions.PBO_ARB = true;
 	gl_extensions.PBO_NV = true;
-	if (extString) {
+	if (strlen(extString) != 0) {
 		gl_extensions.FBO_ARB = strstr(extString, "GL_ARB_framebuffer_object") != 0;
 		gl_extensions.FBO_EXT = strstr(extString, "GL_EXT_framebuffer_object") != 0;
 		gl_extensions.PBO_ARB = strstr(extString, "GL_ARB_pixel_buffer_object") != 0;
