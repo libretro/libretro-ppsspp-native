@@ -30,7 +30,7 @@
 #include "file/file_util.h"
 #include "util/text/utf8.h"
 
-#if defined(__FreeBSD__) || defined(__APPLE__)
+#if !defined(__linux__) && !defined(_WIN32) && !defined(__QNX__)
 #define stat64 stat
 #endif
 
