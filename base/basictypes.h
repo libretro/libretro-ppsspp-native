@@ -87,7 +87,7 @@ inline uint64 swap64(uint64 _data) {return ((uint64)swap32(_data) << 32) | swap3
 inline uint16 swap16(uint16 _data) {return bswap_16(_data);}
 inline uint32 swap32(uint32 _data) {return bswap_32(_data);}
 inline uint64 swap64(uint64 _data) {return bswap_64(_data);}
-#elif defined(__DragonFly__) || defined(__FreeBSD__)
+#elif defined(__FreeBSD__)
 #include <sys/endian.h>
 inline uint16 swap16(uint16 _data) {return bswap16(_data);}
 inline uint32 swap32(uint32 _data) {return bswap32(_data);}
@@ -108,7 +108,7 @@ inline uint32 swap32(const uint8* _pData) {return swap32(*(const uint32*)_pData)
 inline uint64 swap64(const uint8* _pData) {return swap64(*(const uint64*)_pData);}
 
 // Thread local storage
-#ifdef _WIN32
+#if defined(_WIN32) && !defined(__GNUC__)
 #define __THREAD __declspec( thread ) 
 #else
 #define __THREAD __thread

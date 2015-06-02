@@ -15,8 +15,7 @@
 #pragma warning (disable:4996)
 #pragma warning (disable:4244)
 #include <malloc.h>
-#elif !defined(__SYMBIAN32__) && !defined(__Bitrig__) && !defined(__DragonFly__) && \
-      !defined(__FreeBSD__) && !defined(__NetBSD__) && !defined(__OpenBSD__)
+#elif !defined(__SYMBIAN32__) && !defined(__MINGW32__)
 #include <alloca.h>
 #endif
 

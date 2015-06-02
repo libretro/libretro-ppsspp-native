@@ -44,7 +44,26 @@ inline void Crash() {
 // Just ILOGs on nonWindows. On Windows it outputs to the VS output console.
 void OutputDebugStringUTF8(const char *p);
 
-#if defined(ANDROID)
+#if defined(__LIBRETRO__)
+
+#include <libretro.h>
+
+extern retro_log_printf_t log_cb;
+
+#ifdef _DEBUG
+#define DLOG(...)    log_cb(RETRO_LOG_INFO, __VA_ARGS__);
+#else
+#define DLOG(...)
+#endif
+
+#define ILOG(...)    log_cb(RETRO_LOG_INFO, __VA_ARGS__);
+#define WLOG(...)    log_cb(RETRO_LOG_WARN, __VA_ARGS__);
+#define ELOG(...)    log_cb(RETRO_LOG_ERROR, __VA_ARGS__);
+#define FLOG(...)   { log_cb(RETRO_LOG_ERROR, __VA_ARGS__); Crash(); }
+
+#define MessageBox(a, b, c, d) log_cb(RETRO_LOG_INFO, "%s %s", (b), (c));
+
+#elif defined(ANDROID)
 
 #include <android/log.h>
 

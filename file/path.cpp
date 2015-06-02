@@ -15,7 +15,7 @@ void PathBrowser::SetPath(const std::string &path) {
 }
 
 void PathBrowser::GetListing(std::vector<FileInfo> &fileInfo, const char *filter) {
-#ifdef _WIN32
+#ifdef _WIN32_NO_MINGW
 	if (path_ == "/") {
 		// Special path that means root of file system.
 		std::vector<std::string> drives = getWindowsDrives();
