@@ -50,6 +50,21 @@ void OutputDebugStringUTF8(const char *p);
 
 extern retro_log_printf_t log_cb;
 
+#if defined(__GNUC__)
+
+#ifdef _DEBUG
+#define DLOG(fmt, ...)    log_cb(RETRO_LOG_INFO, fmt "\n", ##__VA_ARGS__);
+#else
+#define DLOG(fmt, ...)
+#endif
+
+#define ILOG(fmt, ...)    log_cb(RETRO_LOG_INFO, fmt "\n", ##__VA_ARGS__);
+#define WLOG(fmt, ...)    log_cb(RETRO_LOG_WARN, fmt "\n", ##__VA_ARGS__);
+#define ELOG(fmt, ...)    log_cb(RETRO_LOG_ERROR, fmt "\n", ##__VA_ARGS__);
+#define FLOG(fmt, ...)   { log_cb(RETRO_LOG_ERROR, fmt "\n", ##__VA_ARGS__); Crash(); }
+
+#else
+
 #ifdef _DEBUG
 #define DLOG(...)    log_cb(RETRO_LOG_INFO, __VA_ARGS__);
 #else
@@ -61,7 +76,10 @@ extern retro_log_printf_t log_cb;
 #define ELOG(...)    log_cb(RETRO_LOG_ERROR, __VA_ARGS__);
 #define FLOG(...)   { log_cb(RETRO_LOG_ERROR, __VA_ARGS__); Crash(); }
 
-#define MessageBox(a, b, c, d) log_cb(RETRO_LOG_INFO, "%s %s", (b), (c));
+#endif
+
+#undef MessageBox
+#define MessageBox(a, b, c, d) log_cb(RETRO_LOG_INFO, "%s %s\n", (b), (c));
 
 #elif defined(ANDROID)
 
