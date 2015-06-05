@@ -10,8 +10,20 @@
 
 #include "base/basictypes.h"
 
-#ifdef _MSC_VER
+#if defined(__MINGW32__)
+#define strcasecmp mw_strcasecmp
+#define strncasecmp mw_strncasecmp
+#ifdef __cplusplus
+extern "C" {
+#endif
+int mw_strcasecmp(const char *s1, const char *s2);
+int mw_strncasecmp(const char *s1, const char *s2, size_t n);
+#ifdef __cplusplus
+}
+#endif
+#elif defined(_MSC_VER)
 #pragma warning (disable:4996)
+#define strcasecmp _stricmp
 #define strncasecmp _strnicmp
 #endif
 

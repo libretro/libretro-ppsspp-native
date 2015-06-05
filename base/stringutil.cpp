@@ -20,9 +20,37 @@
 #include "base/buffer.h"
 #include "base/stringutil.h"
 
+#if defined(__MINGW32__)
+int mw_strcasecmp(const char *s1, const char *s2)
+{
+  while (*s1 && *s2)
+  {
+    int cmp = tolower(*s1++) - tolower(*s2++);
+    if (cmp) return cmp;
+  }
+  
+  return tolower(*s1) - tolower(*s2);
+}
+
+int mw_strncasecmp(const char *s1, const char *s2, size_t n)
+{
+  if (n)
+  {
+    while (*s1 && *s2 && n--)
+    {
+      int cmp = tolower(*s1++) - tolower(*s2++);
+      if (cmp) return cmp;
+    }
+    
+    return tolower(*s1) - tolower(*s2);
+  }
+  
+  return 0;
+}
+#endif
+
 #ifdef _WIN32_NO_MINGW
 // Function Cross-Compatibility
-#define strcasecmp _stricmp
 
 void OutputDebugStringUTF8(const char *p) {
 	wchar_t temp[2048];
