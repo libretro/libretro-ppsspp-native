@@ -34,15 +34,20 @@ int mw_strcasecmp(const char *s1, const char *s2)
 
 int mw_strncasecmp(const char *s1, const char *s2, size_t n)
 {
-  if (n)
+  ssize_t m = n;
+  
+  if (m)
   {
-    while (*s1 && *s2 && n--)
+    while (*s1 && *s2 && m--)
     {
       int cmp = tolower(*s1++) - tolower(*s2++);
       if (cmp) return cmp;
     }
     
-    return tolower(*s1) - tolower(*s2);
+    if (m > 0)
+    {
+      return tolower(*s1) - tolower(*s2);
+    }
   }
   
   return 0;
